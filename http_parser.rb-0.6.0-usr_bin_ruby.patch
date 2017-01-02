@@ -1,0 +1,9 @@
+diff -uNr http_parser.rb-0.6.0.orig/bench/standalone.rb http_parser.rb-0.6.0/bench/standalone.rb
+--- http_parser.rb-0.6.0.orig/bench/standalone.rb	2016-09-03 15:27:48.046366524 +0200
++++ http_parser.rb-0.6.0/bench/standalone.rb	2016-09-03 15:28:13.458093864 +0200
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env ruby
++#!/usr/bin/ruby
+ $:.unshift File.dirname(__FILE__) + "/../lib"
+ require "rubygems"
+ require "http/parser"

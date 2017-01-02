@@ -1,0 +1,122 @@
+diff -uNr http_parser.rb-0.6.0.orig/spec/parser_spec.rb http_parser.rb-0.6.0/spec/parser_spec.rb
+--- http_parser.rb-0.6.0.orig/spec/parser_spec.rb	2016-09-02 14:40:59.042007967 +0200
++++ http_parser.rb-0.6.0/spec/parser_spec.rb	2016-09-02 14:43:37.886554449 +0200
+@@ -65,8 +65,8 @@
+       "\r\n" +
+       "World"
+ 
+-    @started.should be_true
+-    @done.should be_true
++    @started.should be_truthy
++    @done.should be_truthy
+ 
+     @parser.http_major.should == 1
+     @parser.http_minor.should == 1
+@@ -103,7 +103,7 @@
+ 
+     @headers.should == {'Content-Length' => '5'}
+     @body.should be_empty
+-    @done.should be_false
++    @done.should be_falsey
+   end
+ 
+   it "should reset to initial state" do
+@@ -114,7 +114,7 @@
+ 
+     @parser.request_url.should == '/'
+ 
+-    @parser.reset!.should be_true
++    @parser.reset!.should be_truthy
+ 
+     @parser.http_version.should be_nil
+     @parser.http_method.should be_nil
+@@ -124,7 +124,7 @@
+   end
+ 
+   it "should optionally reset parser state on no-body responses" do
+-   @parser.reset!.should be_true
++   @parser.reset!.should be_truthy
+ 
+    @head, @complete = 0, 0
+    @parser.on_headers_complete = proc {|h| @head += 1; :reset }
+@@ -143,12 +143,12 @@
+   end
+ 
+   it "should retain callbacks after reset" do
+-    @parser.reset!.should be_true
++    @parser.reset!.should be_truthy
+ 
+     @parser << "GET / HTTP/1.0\r\n\r\n"
+-    @started.should be_true
++    @started.should be_truthy
+     @headers.should == {}
+-    @done.should be_true
++    @done.should be_truthy
+   end
+ 
+   it "should parse headers incrementally" do
+@@ -231,10 +231,10 @@
+     @parser = HTTP::Parser.new(callbacks)
+     @parser << "GET / HTTP/1.0\r\n\r\n"
+ 
+-    @started.should be_true
++    @started.should be_truthy
+     @headers.should == {}
+     @body.should == ''
+-    @done.should be_true
++    @done.should be_truthy
+   end
+ 
+   it "should ignore extra content beyond specified length" do
+@@ -246,7 +246,7 @@
+       "  \n"
+ 
+     @body.should == 'hello'
+-    @done.should be_true
++    @done.should be_truthy
+   end
+ 
+   it 'sets upgrade_data if available' do
+@@ -256,7 +256,7 @@
+       "Upgrade: WebSocket\r\n\r\n" +
+       "third key data"
+ 
+-    @parser.upgrade?.should be_true
++    @parser.upgrade?.should be_truthy
+     @parser.upgrade_data.should == 'third key data'
+   end
+ 
+@@ -266,7 +266,7 @@
+       "Connection: Upgrade\r\n" +
+       "Upgrade: WebSocket\r\n\r\n"
+ 
+-    @parser.upgrade?.should be_true
++    @parser.upgrade?.should be_truthy
+     @parser.upgrade_data.should == ''
+   end
+ 
+@@ -281,13 +281,13 @@
+ 
+     @parser.on_headers_complete = proc { |e| :stop }
+     offset = (@parser << request)
+-    @parser.upgrade?.should be_true
++    @parser.upgrade?.should be_truthy
+     @parser.upgrade_data.should == ''
+     offset.should == request.length
+   end
+ 
+   it "should execute on_body on requests with no content-length" do
+-   @parser.reset!.should be_true
++   @parser.reset!.should be_truthy
+ 
+    @head, @complete, @body = 0, 0, 0
+    @parser.on_headers_complete = proc {|h| @head += 1 }
+@@ -316,7 +316,7 @@
+         @parser.keep_alive?.should == test['should_keep_alive']
+ 
+         if test.has_key?('upgrade') and test['upgrade'] != 0
+-          @parser.upgrade?.should be_true
++          @parser.upgrade?.should be_truthy
+           @parser.upgrade_data.should == test['upgrade']
+         end
+ 
